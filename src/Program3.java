@@ -41,28 +41,13 @@ public class Program3 {
         // gain[0].length gives the amount of vibranium
         for(int i = 0; i < gain[0].length; i++) {
             gain[0][i] = 0;
-            //gain[i][0] = 0;
         }
         // gain.length gives the number of projects
         for(int i = 0; i < gain.length; i++) {
             gain[i][0] = 0;
         }
-        /*for(int i = 1; i < gain[0].length; i++) {
-            for (int j = 1; j < gain.length; j++) {
-                gain[i][j] = calculator.calculateGain(i-1, j-1);
-            }
-        }*/
-        //int[][] maxGain = new int[]
         for(int i = 1; i < gain.length; i++) {
             for(int j = 1; j < gain[0].length; j++) {
-                /*int rejectGain = gain[i-1][j];
-                int acceptGain = calculator.calculateGain(i-1, j) + gain[i-1][calculator.getNumVibranium()-j];
-                if(rejectGain > acceptGain) {
-                    gain[i][j] = rejectGain;
-                }
-                else {
-                    gain[i][j] = acceptGain;
-                }*/
                 gain[i][j] = findMaxGain(gain, i, j);
             }
         }
@@ -88,8 +73,33 @@ public class Program3 {
      */
      //TODO: Complete this method
      public int computeLoss() {
-        
-        return 0;
+        int[][][] value = new int[vibraniumScenario.getNumOres() + 1][vibraniumScenario.getWeightCapacity() + 1][vibraniumScenario.getVolumeCapacity() + 1];
+        for(int i = 0; i < value[0].length; i++) {
+            for(int j = 0; j < value[0][0].length; j++) {
+                value[0][i][j] = 0;
+            }
+        }
+        for(int o = 1; o < value.length; o++) {
+            VibraniumOre currentOre = vibraniumScenario.getVibraniumOre(o - 1);
+            for(int w = 1; w < value[0].length; w++) {
+                for(int v = 1; v < value[0][0].length; v++) {
+                    int reject = value[o - 1][w][v];
+                    if(currentOre.getWeight() > w || currentOre.getVolume() > v) {
+                        value[o][w][v] = reject;
+                    }
+                    else {
+                        int accept = currentOre.getPrice() + value[o - 1][w - currentOre.getWeight()][v - currentOre.getVolume()];
+                        if(accept > reject) {
+                            value[o][w][v] = accept;
+                        }
+                        else {
+                            value[o][w][v] = reject;
+                        }
+                    }
+                }
+            }
+        }
+        return value[vibraniumScenario.getNumOres()][vibraniumScenario.getWeightCapacity()][vibraniumScenario.getVolumeCapacity()];
      }
 }
 
